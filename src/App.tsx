@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
+import { useAuthenticator } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
 
 function App() {
+  const { signOut } = useAuthenticator();
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
   useEffect(() => {
@@ -27,21 +29,25 @@ function App() {
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>
-            {todo.content}
-            <button onClick={() => completeTodo(todo.id)} style={{ marginLeft: "8px" }}>
-              done!
-            </button>
+          <li
+            key={todo.id}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "4px 4px",
+            }}
+          >
+            <span>{todo.content}</span>
+            <button onClick={() => completeTodo(todo.id)}>done!</button>
           </li>
         ))}
       </ul>
       <div>
-        TODOアプリです。完了したら完了ボタンを推してね
+        TODOアプリです。完了したら完了ボタンを押してね
         <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
       </div>
+      <button onClick={signOut}>Sign out</button>
     </main>
   );
 }
